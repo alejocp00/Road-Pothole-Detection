@@ -1,3 +1,4 @@
+import subprocess
 import torch
 import torch.nn as nn
 from torchvision import transforms
@@ -103,7 +104,6 @@ for model_name in models:
         overlay_image.save(model_output_path + "/" + image.replace(".png", " overlay.png"))
         
         # Guardar la máscara original
-        original_mask = Image.open(mask_images_path+image).convert("L")
-        original_mask.save(model_output_path + "/" + image.replace(".png", " original.png"))
+        subprocess.run(f"cp ./dataset/masks/{image} {model_output_path}/{image.replace('.png', '_original_mask.png')}", shell=True)
         
         
