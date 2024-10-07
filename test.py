@@ -7,11 +7,55 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 from torchvision import models
-
+import torch
+import numpy as np
+from sklearn.metrics import confusion_matrix
+import seaborn as sns
 
 images_to_predict = os.listdir("./testing/images")
 mask_images_path = "./dataset/masks/"
 output_path = "./predicted/"
+
+
+def compute_confusion_matrix(output, target, num_classes):
+    # Verificar que los tensores tengan las mismas dimensiones
+    # if output.shape != target.shape:
+    #     raise ValueError("Output and target shapes do not match!")
+
+    # Si output y target son tensores de PyTorch, convertir a numpy
+    if isinstance(target, torch.Tensor):
+        labels = target.cpu().numpy().astype(np.int64).flatten()
+    else:
+        labels = target.astype(np.int64).flatten()
+
+    if isinstance(output, torch.Tensor):
+        predictions = output.cpu().numpy().astype(np.int64).flatten()
+    else:
+        predictions = output.astype(np.int64).flatten()
+
+    # Calcular la matriz de confusión
+    conf_matrix = confusion_matrix(labels, predictions, labels=list(range(num_classes)))
+    return conf_matrix
+
+
+def save_confusion_matrix(conf_matrix, class_names, file_path):
+    plt.figure(figsize=(8, 6))
+    sns.heatmap(
+        conf_matrix,
+        annot=True,
+        fmt="d",
+        cmap="Blues",
+        xticklabels=class_names,
+        yticklabels=class_names,
+    )
+    plt.xlabel("Predicted")
+    plt.ylabel("True")
+    plt.title("Confusion Matrix")
+
+    # Guardar la figura como archivo de imagen
+    plt.savefig(file_path, format="png")
+    plt.close()  # Cerrar la figura para liberar memoria
+
 
 # Definir el modelos
 models = [model for model in os.listdir("./models/") if model.endswith(".pth")]
@@ -53,6 +97,8 @@ for model_name in models:
         # Deshabilitar el cálculo de gradientes para acelerar
         with torch.no_grad():
             output = model(input_batch)["out"][0]  # Obtener la salida y eliminar dimensión de batch
+        
+        conf_matrix = compute_confusion_matrix(model(input_batch)["out"].argmax(dim=1), input_mask, 3)
 
         # Obtener las predicciones de clase por píxel
         # Si ya se utilizó CrossEntropyLoss, no es necesario aplicar Softmax para obtener las clases
@@ -105,5 +151,5 @@ for model_name in models:
         
         # Guardar la máscara original
         subprocess.run(f"cp ./dataset/masks/{image} {model_output_path}/{image.replace('.png', '_original_mask.png')}", shell=True)
-        
-        
+
+        save_confusion_matrix(conf_matrix, ["Background", "good_street", "bad_street"], model_output_path + "/" + image.replace(".png", "_confusion_matrix.png"))
