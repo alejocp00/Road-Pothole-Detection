@@ -165,5 +165,4 @@ cython_debug/
 
 dataset/
 assets/
-models/*
-!models/model_deeplabv3_resnet101_ts315,315_bs4_ep10_w.pth
+models/
