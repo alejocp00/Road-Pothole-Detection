@@ -73,9 +73,10 @@ La resolución espacial de las imágenes es un factor crítico. Imágenes con ba
 
 
 \section{Metodología}
-Dado que el presente proyecto tiene como objetivo principal evaluar el estado de deterioro de las calles mediante el análisis de imágenes satelitales., se implementan dos arquitecturas de redes neuronales avanzadas: **FCN ResNet50** y **DeepLab**. La elección de estos modelos se fundamenta en su capacidad para realizar segmentación semántica, lo que permite identificar con precisión las áreas afectadas por el deterioro.
+Dado que el presente proyecto tiene como objetivo principal evaluar el estado de deterioro de las calles mediante el análisis de imágenes satelitales, se implementan dos arquitecturas de redes neuronales avanzadas: **FCN ResNet50** y **DeepLab**. La elección de estos modelos se fundamenta en su capacidad para realizar segmentación semántica, lo que permite identificar con precisión las áreas afectadas por el deterioro.
 
 A través de la comparación del rendimiento de ambos modelos, se busca no solo determinar cuál ofrece una mayor precisión en la clasificación del estado de las calles, sino también comprender mejor las características que influyen en su efectividad.
+
 \subsection{Datos}
 La creación de la base de datos representó un desafío significativo durante la implementación del proyecto, dado que la evaluación del estado de una calle a partir de imágenes satelitales es una tarea compleja que resulta difícil de realizar a simple vista. Se llevó a cabo una búsqueda exhaustiva en diversas plataformas y aplicaciones, incluidas Kaggle, Mapillary y Google Maps, donde se lograron recopilar un total de 37 imágenes satelitales provenientes de diferentes áreas de La Habana.
 
@@ -84,13 +85,71 @@ Dado que la cantidad de datos recolectados no constituía un número suficiente 
 Posteriormente, se utilizó la herramienta Labelme para crear máscaras que señalaran las condiciones de las calles, clasificándolas en buen estado y mal estado. Este proceso fue laborioso y ralentizó el avance del proyecto, ya que tuvo que realizarse manualmente.
 
 \subsection{Algoritmos y Resultados obtenidos}
-Detalla los algoritmos de Machine Learning que has utilizado, como regresión, clasificación o redes neuronales.
+\section{Metodología}
+La metodología del proyecto se centra en la utilización de modelos de aprendizaje profundo, específicamente el modelo preentrenado DeepLabv3, para evaluar el estado de deterioro de las calles de Cuba a partir de imágenes satelitales. A continuación se detalla el proceso seguido en cada fase del entrenamiento.
 
-\section{Comparaci\'on}
-Presenta los resultados obtenidos. Utiliza gráficos y tablas para ilustrar tus hallazgos. Asegúrate de interpretar los resultados y discutir su significado.
+\subsection{Entrenamiento Inicial}
+En la primera fase, se llevó a cabo un entrenamiento inicial del modelo DeepLabv3. Durante este proceso, se observó que la reducción en la calidad de las imágenes resultó en una pérdida significativa de información, lo que afectó negativamente los resultados. Los modelos entrenados en esta etapa mostraron un rendimiento insatisfactorio, con una detección deficiente del estado de las calles.
+
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\textwidth]{/media/roxy/829A20F39A20E4FF/new/Road-Pothole-Detection-main/predicted/model_deeplabv3_resnet101_ts256,256_bs5_ep30.pth/7.png} % Adjust width as needed
+    \caption{Input} % Image caption
+    \label{fig:input} % Label for cross-references
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\textwidth]{/media/roxy/829A20F39A20E4FF/new/Road-Pothole-Detection-main/predicted/model_deeplabv3_resnet101_ts256,256_bs5_ep30.pth/7 prediction.png} % Adjust width as needed
+    \caption{Output Model 1} % Image caption
+    \label{fig:input} % Label for cross-references
+\end{figure}
+
+\begin{figure} 
+    \centering
+    \includegraphics[width=0.8\textwidth]{/media/roxy/829A20F39A20E4FF/new/Road-Pothole-Detection-main/predicted/model_deeplabv3_resnet101_ts256,256_bs5_ep30.pth/7_confusion_matrix.png} % Adjust width as needed
+    \caption{Matriz de confusión Model 1} % Image caption
+    \label{fig:matriz_confusion} % Label for cross-references
+\end{figure}
+
+\subsection{Mejoras en el Entrenamiento}
+Con base en los resultados obtenidos en la primera fase, se implementaron mejoras significativas en el segundo intento de entrenamiento. Se utilizó el conjunto de imágenes sin restarle calidad y se ajustaron parámetros clave del modelo: el peso. En esta fase, el modelo mostró una mejora notable en la detección de las condiciones de las calles, logrando identificar con mayor precisión las áreas en mal estado y aquellas que estaban en buen estado.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\textwidth]{/media/roxy/829A20F39A20E4FF/new/Road-Pothole-Detection-main/predicted/model_deeplabv3_resnet101_ts300,300_bs2_ep4_w.pth/7 prediction.png} % Adjust width as needed
+    \caption{Output Model 2} % Image caption
+    \label{fig:input} % Label for cross-references
+\end{figure}
+
+\begin{figure} 
+    \centering
+    \includegraphics[width=0.8\textwidth]{/media/roxy/829A20F39A20E4FF/new/Road-Pothole-Detection-main/predicted/model_deeplabv3_resnet101_ts300,300_bs2_ep4_w.pth/7_confusion_matrix.png} % Adjust width as needed
+    \caption{Matriz de confusión Model 2} % Image caption
+    \label{fig:matriz_confusion} % Label for cross-references
+\end{figure}
+
+
+\subsection{Aumento de Épocas y Resultados Finales}
+Uno de los cambios más relevantes fue el aumento del número de épocas durante el entrenamiento a 100. Este ajuste permitió al modelo aprender patrones más complejos y mejorar su capacidad para clasificar el estado de deterioro de las calles. Los resultados obtenidos fueron significativamente mejores en comparación con los entrenamientos anteriores, evidenciando un avance considerable en la detección.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\textwidth]{/media/roxy/829A20F39A20E4FF/new/Road-Pothole-Detection-main/predicted/model_deeplabv3_resnet101_ts315,315_bs4_ep10_w.pth/7 prediction.png} % Adjust width as needed
+    \caption{Output Model 3} % Image caption
+    \label{fig:input} % Label for cross-references
+\end{figure}
+
+\begin{figure} 
+    \centering
+    \includegraphics[width=0.8\textwidth]{/media/roxy/829A20F39A20E4FF/new/Road-Pothole-Detection-main/predicted/model_deeplabv3_resnet101_ts315,315_bs4_ep10_w.pth/12_confusion_matrix.png} % Adjust width as needed
+    \caption{Matriz de confusión Model 3} % Image caption
+    \label{fig:matriz_confusion} % Label for cross-references
+\end{figure}
 
 \section{Conclusiones}
-Resume los hallazgos más importantes y discute las implicaciones de tu trabajo. Menciona posibles trabajos futuros o mejoras que podrían hacerse.
+A pesar de los avances logrados, se identificó que un conjunto de datos más amplio y diverso podría haber mejorado aún más la precisión del modelo. La falta de datos adecuados limita la capacidad del modelo para generalizar y ofrecer resultados más precisos. Para futuras investigaciones, se recomienda la recopilación y etiquetado de un conjunto de datos más extenso que incluya diversas condiciones y tipos de deterioro.
 
 \section*{Referencias}
 \begin{enumerate}
